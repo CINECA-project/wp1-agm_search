@@ -14,8 +14,6 @@ services:
       - POSTGRES_USER=search
       - POSTGRES_PASSWORD=secretpassword
       - POSTGRES_DB=search
-    hostname: search-db
-    container_name: search-db
     image: postgres:9.6-alpine
     volumes:
       - ./db:/docker-entrypoint-initdb.d
@@ -23,7 +21,6 @@ services:
       - "5432:5432"
 
   prestoapp:
-    container_name: prestoapp
     build: ./presto_service
     ports:
       - "8080:8080"
