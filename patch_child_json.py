@@ -5,9 +5,11 @@ into the postgres database used by the reference Beacon 2.0 implementation.
 """
 import argparse
 import csv
+import datetime
 import json
 import sys
 import vcf
+import dateutil.relativedelta
 
 def vcf_samples(vcffile):
     """
@@ -41,14 +43,18 @@ def main():
         print(f"Error reading data file {args.datafile}.", file=sys.stderr)
         return
 
+    now = datetime.datetime.now()
     with open(args.csvfile, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for idx, row in enumerate(reader):
-            data[idx]["physiologicalMeasurements"]["anthropometry"]["weight"] = [str(float(row['birth_weight_g'])/1000.), row['sbjt_weight_kg']]
-            data[idx]["physiologicalMeasurements"]["anthropometry"]["height"] = [row['height_cm'], row['sbjt_length_cm']]
-            data[idx]["physiologicalMeasurements"]["circulationAndRespiration"]["bloodPressure"] = [row['sbjt_blood_pressure_systolic']]
+            data[idx]["physiologicalMeasurements"]["anthropometry"]["weight"] = [float(row['birth_weight_g'])/1000., float(row['sbjt_weight_kg'])]
+            data[idx]["physiologicalMeasurements"]["anthropometry"]["height"] = [float(row['height_cm']), float(row['sbjt_length_cm'])]
+            data[idx]["physiologicalMeasurements"]["circulationAndRespiration"]["bloodPressure"] = [float(row['sbjt_blood_pressure_systolic'])]
             if len(samples) > idx:
                 data[idx]["sample"] = samples[idx]
+
+            dob = datetime.datetime.strptime(data[idx]["demographic"]["age"], "%d-%b-%y")
+            data[idx]["demographic"]["age"] = dateutil.relativedelta.relativedelta(now, dob).years
 
     print(json.dumps(data))
 

@@ -1,13 +1,13 @@
 version: "3"
 services:
-  mongo_child:
+  mongo_pseudochild:
     image: mongo
     volumes:
       - ./data/mongodb_child:/data/db
     ports:
       - "27011:27017"
 
-  mongo_colous:
+  mongo_colaus:
     image: mongo
     volumes:
       - ./data/mongodb_colaus:/data/db
@@ -38,8 +38,12 @@ services:
     ports:
       - "8080:8080"
     links:
-      - mongo
+      - mongo_pseudochild
+      - mongo_colaus
+      - mongo_h3africa
       - postgres
     depends_on:
-      - mongo
+      - mongo_pseudochild
+      - mongo_colaus
+      - mongo_h3africa
       - postgres
