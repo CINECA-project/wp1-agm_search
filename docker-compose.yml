@@ -1,12 +1,25 @@
 version: "3"
 services:
-  mongo:
-    container_name: local_mongo
+  mongo_child:
     image: mongo
     volumes:
-      - ./data/mongodb:/data/db
+      - ./data/mongodb_child:/data/db
     ports:
-      - "27017:27017"
+      - "27011:27017"
+
+  mongo_colous:
+    image: mongo
+    volumes:
+      - ./data/mongodb_colaus:/data/db
+    ports:
+      - "27012:27017"
+
+  mongo_h3africa:
+    image: mongo
+    volumes:
+      - ./data/mongodb_h3africa:/data/db
+    ports:
+      - "27013:27017"
 
   postgres:
     environment:
@@ -30,16 +43,3 @@ services:
     depends_on:
       - mongo
       - postgres
-
-  admin-mongo:
-    image: 0x59/admin-mongo:latest
-    ports:
-      - "8082:8082"
-    environment:
-      - PORT=8082
-      - CONN_NAME=mongo
-      - DB_HOST=mongo
-    depends_on:
-      - mongo
-    links:
-      - mongo

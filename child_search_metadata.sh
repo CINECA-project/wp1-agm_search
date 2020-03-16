@@ -3,6 +3,7 @@
 echo "Importing WP3-mapped JSON"
 mongoimport -d search \
             -c child_wp3 \
+            --host=0.0.0.0:27011
             --drop \
             --jsonArray \
             --file="data/patched_child.json"
